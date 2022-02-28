@@ -24,6 +24,7 @@ import github.ryuunoakaihitomi.powerpanel.util.RC
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
+import rikka.sui.Sui
 import timber.log.Timber
 
 // AndroidViewModel 因为魔法问题不可用了
@@ -60,7 +61,14 @@ class PowerViewModel : ViewModel() {
     // 用来显示对话框
     fun prepare() {
         viewModelScope.launch(Dispatchers.IO) {
-            val isRoot = Shell.rootAccess() // 在这里提供root状态
+            // 在这里提供root状态
+            val isRoot = if (Sui.isSui()) {
+                // use Sui whenever available
+                Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
+            } else {
+                // if Sui is not present, fallback to plain old su
+                Shell.rootAccess()
+            }
             viewModelScope.launch {
                 _rootMode.value = isRoot
                 forceMode.value = false
