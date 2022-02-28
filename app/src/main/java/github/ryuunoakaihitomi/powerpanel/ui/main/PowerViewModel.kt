@@ -143,8 +143,17 @@ class PowerViewModel : ViewModel() {
 
             _infoArray.value = privilegedActions
             // https://developer.android.google.cn/guide/topics/ui/shortcuts?hl=en#shortcut-limitations
-            // Although you can publish up to five shortcuts (static and dynamic shortcuts combined) at a time for your app, most launchers can only display four.
-            _shortcutInfoArray.value = privilegedActions.copyOfRange(0, 4)
+            // Although you can publish up to five shortcuts (static and dynamic shortcuts combined)
+            // at a time for your app, most launchers can only display four.
+            // Here we put items that are most frequently used at the bottom, since (1) this makes
+            // them closer to the app icon, maximizing ergonomics; and (2) some launchers tend to
+            // hide items that are close to the top when there is no sufficient space.
+            _shortcutInfoArray.value = arrayOf(
+                recovery,
+                bootloader,
+                shutdown,
+                reboot,
+            )
         } else {
             val ssb = SpannableStringBuilder()
             val suffix = buildSpannedString {
